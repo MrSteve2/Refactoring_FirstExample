@@ -26,7 +26,7 @@ invoices = [
 
 
 function statement(invoice, plays) {
-    function amountFor(perf, play) {
+    function amountFor(perf) {
         let result = 0;
 
         switch (playFor(perf).type) {
@@ -44,7 +44,7 @@ function statement(invoice, plays) {
                 result += 300 * perf.audience;
                 break;
             default:
-                throw new Error(`unknown type: ${play.type}`);
+                throw new Error(`unknown type: ${playFor(perf).type}`);
         }
         return result;
     }
