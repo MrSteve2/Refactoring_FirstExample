@@ -29,7 +29,7 @@ function statement(invoice, plays) {
     function amountFor(perf, play) {
         let result = 0;
 
-        switch (play.type) {
+        switch (playFor(perf).type) {
             case "tragedy":
                 result = 40000;
                 if (perf.audience > 30) {
