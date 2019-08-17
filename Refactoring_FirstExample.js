@@ -60,7 +60,7 @@ function statement(invoice, plays) {
         return result
     }
 
-    function format(aNumber) {
+    function usd(aNumber) {
         return new Intl.NumberFormat("en-US",
             {
                 style: "currency", currency: "USD",
@@ -78,10 +78,10 @@ function statement(invoice, plays) {
         volumeCredits += volumeCreditsFor(perf)
 
         // print line for this order
-        result += `  ${playFor(perf).name}: ${format(thisAmount / 100)} (${perf.audience} seats) \n`;
+        result += `  ${playFor(perf).name}: ${usd(thisAmount / 100)} (${perf.audience} seats) \n`;
         totalAmount += thisAmount;
     }
-    result += `Amount owed is ${format(totalAmount / 100)} \n`;
+    result += `Amount owed is ${usd(totalAmount / 100)} \n`;
     result += `You earned ${volumeCredits} credits\n`;
     return result;
 }
