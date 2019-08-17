@@ -34,10 +34,15 @@ function statement(invoice, plays) {
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
+        result.play = playFor(aPerformance);
         return result;
     }
 
-    function renderPlainText(data, plays) {
+    function playFor(aPerformance) {
+        return plays[aPerformance.playID];
+    }
+
+    function renderPlainText(data) {
         let result = `Statement for ${data.customer}\n`;
         for (let perf of data.performances) {
             // print line for this order
@@ -45,7 +50,7 @@ function statement(invoice, plays) {
         }
 
         result += `Amount owed is ${usd(totalAmount(data) / 100)} \n`;
-        result += `You earned ${totalVolumeCredits()} credits\n`;
+        result += `You earned ${totalVolumeCredits(data)} credits\n`;
         return result;
 
         function amountFor(perf) {
@@ -70,9 +75,6 @@ function statement(invoice, plays) {
             }
             return result;
         }
-        function playFor(aPerformance) {
-            return plays[aPerformance.playID];
-        }
 
         function volumeCreditsFor(perf) {
             let result = 0;
@@ -90,12 +92,13 @@ function statement(invoice, plays) {
                 }).format(aNumber);
         }
 
-        function totalVolumeCredits() {
+        function totalVolumeCredits(data) {
             let volumeCredits = 0;
             for (let perf of data.performances) {
                 // add volume credits
                 volumeCredits += volumeCreditsFor(perf)
             }
+            return volumeCredits
         }
 
         function totalAmount(data) {
@@ -106,7 +109,6 @@ function statement(invoice, plays) {
             return result
         }
     }
-
 }
 
 for (let invoice of invoices) {
