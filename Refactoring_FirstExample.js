@@ -24,7 +24,7 @@ invoices = [
     }
 ]
 
-// STOP AT: At the moment, I'm just making a copy of the performance object,
+// STOP AT: Next, I move the volume credits calculation (compile-test-commit).
 function statement(invoice, plays) {
     const statementData = {};
     statementData.customer = invoice.customer;
