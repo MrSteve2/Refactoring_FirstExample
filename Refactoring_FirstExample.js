@@ -30,13 +30,34 @@ function statement(invoice, plays) {
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances;
     statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = totalAmount(statementData)
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData)
+
     return renderPlainText(statementData, plays);
+
+    function totalVolumeCredits(data) {
+        return data.performances
+            .reduce((total, p) => total + p.volumeCredits, 0)
+    }
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance);
         result.play = playFor(aPerformance);
         result.amount = amountFor(result);
+        result.volumeCredits = volumeCreditsFor(result)
         return result;
+    }
+    function totalAmount(data) {
+        return data.performances
+            .reduce((total, p) => total + p.amount, 0)
+    }
+
+    function volumeCreditsFor(perf) {
+        let result = 0;
+        result += Math.max(perf.audience - 30, 0);
+        // add extra credit for every ten comedy attendees
+        if ("comedy" === perf.play.type) result += Math.floor(perf.audience / 5);
+        return result
     }
 
     function playFor(aPerformance) {
@@ -74,17 +95,9 @@ function statement(invoice, plays) {
             result += `  ${perf.play.name}: ${usd(perf.amount / 100)} (${perf.audience} seats) \n`;
         }
 
-        result += `Amount owed is ${usd(totalAmount(data) / 100)} \n`;
-        result += `You earned ${totalVolumeCredits(data)} credits\n`;
+        result += `Amount owed is ${usd(data.totalAmount / 100)} \n`;
+        result += `You earned ${data.totalVolumeCredits} credits\n`;
         return result;
-
-        function volumeCreditsFor(perf) {
-            let result = 0;
-            result += Math.max(perf.audience - 30, 0);
-            // add extra credit for every ten comedy attendees
-            if ("comedy" === perf.play.type) result += Math.floor(perf.audience / 5);
-            return result
-        }
 
         function usd(aNumber) {
             return new Intl.NumberFormat("en-US",
@@ -94,22 +107,8 @@ function statement(invoice, plays) {
                 }).format(aNumber);
         }
 
-        function totalVolumeCredits(data) {
-            let volumeCredits = 0;
-            for (let perf of data.performances) {
-                // add volume credits
-                volumeCredits += volumeCreditsFor(perf)
-            }
-            return volumeCredits
-        }
 
-        function totalAmount(data) {
-            let result = 0;
-            for (let perf of data.performances) {
-                result += perf.amount;
-            }
-            return result
-        }
+
     }
 }
 
